@@ -1,0 +1,31 @@
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: apigateway-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: apigateway
+        stage: dev
+    spec:
+      containers:
+      - name: apigateway
+        image: openwhisk/openwhisk-apigateway
+        env:
+        - name: REDIS_HOST
+          value: redis
+        - name: REDIS_PORT
+          value: "6379"
+        - name: PUBLIC_MANAGEDURL_HOST
+          value: apigateway
+        - name: PUBLIC_MANAGEDURL_PORT
+          value: "9001"
+        ports:
+        - containerPort: 8080
+          name: mgmt
+        - containerPort: 9000
+          name: api
+      restartPolicy: Always
+

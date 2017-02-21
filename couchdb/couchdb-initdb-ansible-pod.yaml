@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: couchdb-initdb-ansible-runner
+spec:
+  containers:
+  - name: ansible
+    image: yqf3139/ansible-docker
+    command: ["ansible-playbook", "-i", "/ansible/environments/local", "/ansible/initdb.yml"]
+    volumeMounts:
+    - mountPath: /ansible
+      name: ansible-volume
+  volumes:
+  - name: ansible-volume
+    hostPath:
+      path: /opt/ansible
+  restartPolicy: Never
+  nodeSelector:
+    role: master

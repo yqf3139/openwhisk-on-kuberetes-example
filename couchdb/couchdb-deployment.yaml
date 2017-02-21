@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: couchdb-master-pv-claim
+  labels:
+    app: couchdb
+    stage: dev 
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: couchdb-master-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: couchdb
+        stage: dev
+    spec:
+      containers:
+      - name: couchdb
+        image: couchdb:1.6
+        ports:
+        - containerPort: 5984
+        volumeMounts:
+        - name: couchdb-master-persistent-storage
+          mountPath: /usr/local/var/lib/couchdb
+      restartPolicy: Always
+      volumes:
+      - name: couchdb-master-persistent-storage
+        persistentVolumeClaim:
+          claimName: couchdb-master-pv-claim

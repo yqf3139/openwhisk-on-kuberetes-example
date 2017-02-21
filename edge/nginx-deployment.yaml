@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+        stage: dev
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.11
+        ports:
+        - containerPort: 80
+          name: http
+        - containerPort: 443
+          name: https
+        - containerPort: 8443
+          name: adminportal
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/nginx
+        - name: log-volume
+          mountPath: /logs
+      restartPolicy: Always
+      volumes:
+      - name: config-volume
+        secret:
+          secretName: edge-nginx-secrets
+          defaultMode: 256
+      - name: log-volume
+        emptyDir: {}
