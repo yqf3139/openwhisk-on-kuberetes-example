@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: kafka-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kafka
+        stage: dev
+    spec:
+      containers:
+      - name: kafka
+        image: ches/kafka:0.10.0.1
+        env:
+        - name: ZOOKEEPER_CONNECTION_STRING
+          value: "zookeeper:2181"
+        - name: KAFKA_PORT
+          value: "9092"
+        ports:
+        - containerPort: 9092
+      restartPolicy: Always

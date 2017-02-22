@@ -1,0 +1,45 @@
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: controller-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: controller
+        stage: dev
+    spec:
+      containers:
+      - name: controller
+        image: yqf3139/controller:latest
+        env:
+        - name: COMPONENT_NAME
+          value: controller
+        - name: CONSULSERVER_HOST
+          value: consul
+        - name: CONSUL_HOST_PORT4
+          value: "8500"
+        - name: WHISK_VERSION_NAME
+          value: kubernetes_port
+        - name: WHISK_VERSION_DATE
+          value: "2017-02-22T16:40:14Z"
+        - name: WHISK_VERSION_BUILDNO
+          value: latest
+        - name: KAFKA_NUMPARTITIONS
+          value: "2"
+        - name: SERVICE_CHECK_HTTP
+          value: "/ping"
+        - name: SERVICE_CHECK_TIMEOUT
+          value: "2s"
+        - name: SERVICE_CHECK_INTERVAL
+          value: "15s"
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: log-volume
+          mountPath: /logs
+      restartPolicy: Always
+      volumes:
+      - name: log-volume
+        emptyDir: {}
